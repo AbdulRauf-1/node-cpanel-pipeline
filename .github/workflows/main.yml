@@ -36,7 +36,7 @@ jobs:
       # Step 6: Deploy files to cPanel via FTP
       - name: Install lftp
         run: sudo apt-get update && sudo apt-get install -y lftp
-        env:
+        with:
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_SERVER: ${{ secrets.FTP_SERVER}}
