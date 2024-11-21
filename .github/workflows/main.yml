@@ -36,7 +36,14 @@ jobs:
       # Step 6: Deploy files to cPanel via FTP
       - name: Install lftp
         run: sudo apt-get update && sudo apt-get install -y lftp
-        with:
+
+      - name: Deploy to Shared Hosting using FTP
+        env:
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          FTP_SERVER: ${{ secrets.FTP_SERVER}}
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        run: |
+          # Use lftp to upload the entire project directory (including node_modules) to your cPanel server
+          lftp -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER <<EOF
+          mirror -R --ignore-time --verbose ./ /rauf.trimworldwide.com/
+          EOF
