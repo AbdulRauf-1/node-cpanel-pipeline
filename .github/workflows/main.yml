@@ -46,8 +46,9 @@ jobs:
           # Use lftp to upload the entire project directory (including node_modules) to your cPanel server
           lftp -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER <<EOF
           set ftp:ssl-allow no
-          mirror -R --ignore-time --verbose ./ /home/trimworldwide/rauf.trimworldwide.com/ \
+          mirror -R --ignore-time --verbose ./ . \
             --exclude ".github" \
+            --exclude ".git*" \
             --exclude "node_modules"
           EOF
       
@@ -61,6 +62,5 @@ jobs:
           lftp -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER <<EOF
           set ftp:ssl-allow no
           open $FTP_SERVER
-          lcd /home/trimworldwide/rauf.trimworldwide.com/
           !npm install
           EOF
