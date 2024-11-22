@@ -36,21 +36,24 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-
-      # Step 6: Deploy files to cPanel via FTP
+      # Step 1: Checkout latest code
       - name: Get latest code
         uses: actions/checkout@v2
         
+      # Step 2: Create .htaccess file from secret
+      - name: Create .htaccess file
+        run: echo "${{ secrets.HTACCESS_CONTENT }}" > .htaccess
+
+      # Step 3: Upload all files including .htaccess to cPanel via FTP
       - name: Sync files to development
         uses: SamKirkland/FTP-Deploy-Action@v4.2.0
         with:
           server: ftp.trimworldwide.com
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-      
+
+      # Step 4: Trigger npm install on the server
       - name: Trigger npm install on server
         run: |
           echo "Triggering npm install via PHP script..."
           curl -X GET "https://rauf.trimworldwide.com/trigger.php"
-
-
