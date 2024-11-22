@@ -32,6 +32,7 @@ jobs:
       - name: Create .htaccess file
         run: |
           echo "${{ secrets.HTACCESS_CONTENT }}" > .htaccess
+          
       # Step 6: Deploy files to cPanel via FTP
       - name: Get latest code
         uses: actions/checkout@v2
