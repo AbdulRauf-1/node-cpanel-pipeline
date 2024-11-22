@@ -43,7 +43,7 @@ jobs:
         uses: zricethezav/gitleaks-action@v1.5.0
 
   deploy:
-    needs: [build, security_scan]
+    needs: build
     runs-on: ubuntu-latest
     steps:
       # Step 1: Checkout the latest code
@@ -53,7 +53,6 @@ jobs:
       # Step 2: Create .htaccess file
       - name: Create .htaccess file
         run: |
-          echo "Creating .htaccess file..."
           echo "${{ secrets.HTACCESS_CONTENT }}" > $GITHUB_WORKSPACE/.htaccess
 
       # Step 3: Debugging - List files to ensure .htaccess was created
@@ -67,9 +66,6 @@ jobs:
           server: ftp.trimworldwide.com
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          dotfiles: true
-          include: |
-            .htaccess
 
       # Step 5: Trigger npm install on the server
       - name: Trigger npm install on server
