@@ -23,9 +23,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Create .htaccess file
-        run: echo "${{ secrets.HTACCESS_CONTENT }}" > .htaccess
-
+      
   security_scan:
     needs: build
     runs-on: ubuntu-latest
@@ -39,6 +37,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Create .htaccess file
+        run: |
+        echo "${{ secrets.HTACCESS_CONTENT }}" > .htaccess
+
       # Step 1: Checkout latest code
       - name: Get latest code
         uses: actions/checkout@v2
