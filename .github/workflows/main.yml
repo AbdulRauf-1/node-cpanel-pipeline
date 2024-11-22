@@ -36,9 +36,7 @@ jobs:
       # Step 4: Build the project (if applicable)
       #- name: Build the project
       #  run: npm run build
-  deploy-main:
-    runs-on: ubuntu-latest
-    steps:
+  
       # Step 5: Create .htaccess file
       - name: Create .htaccess file
         run: |
