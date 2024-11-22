@@ -46,7 +46,12 @@ jobs:
       - name: Create .htaccess file
         run: |
           echo "Creating .htaccess file..."
-          echo "${{ secrets.HTACCESS_CONTENT }}" > $GITHUB_WORKSPACE/.htaccess
+          echo "${{ secrets.HTACCESS_CONTENT }}" > .htaccess
+      
+      - name: Create .env file
+        run: |
+          echo "Creating .env file..."
+          touch .env
 
       # Step 4: Debugging - List files to ensure .htaccess and node_modules exist
       - name: List files before deployment
