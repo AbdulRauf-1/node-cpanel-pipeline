@@ -3,8 +3,8 @@
 $workingDir = '/home/trimworldwide/rauf.trimworldwide.com';
 
 // Full path to node and npm binaries
-$nodePath = '/home/trimworldwide/.nvm/versions/node/v16.14.0/bin/node';
-$npmPath = '/home/trimworldwide/.nvm/versions/node/v16.14.0/bin/npm';
+$nodePath = '/home/trimworldwide/.nvm/versions/node/v18.20.4/bin/node';
+$npmPath = '/home/trimworldwide/.nvm/versions/node/v18.20.4/bin/npm';
 
 // Ensure permissions for the working directory and binaries
 $permissionsCheck = shell_exec("chmod -R 775 $workingDir && chmod +x $nodePath $npmPath 2>&1");
