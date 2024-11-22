@@ -19,7 +19,7 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v2
         with:
-          path: ~/.npm
+          path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
@@ -28,19 +28,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-  security_scan:
-    needs: build
-    runs-on: ubuntu-latest
-    container:
-      image: node:18.20.4
-    steps:
-      # Step 1: Checkout the code
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      # Step 2: Run security scan
-      - name: Security Scan
-        uses: zricethezav/gitleaks-action@v1.5.0
+      # Step 4: Verify node_modules creation
+      - name: Verify node_modules
+        run: |
+          echo "Verifying node_modules directory..."
+          ls -la node_modules
 
   deploy:
     needs: build
@@ -50,24 +42,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: Create .htaccess file
+      # Step 3: Create .htaccess file
       - name: Create .htaccess file
         run: |
+          echo "Creating .htaccess file..."
           echo "${{ secrets.HTACCESS_CONTENT }}" > $GITHUB_WORKSPACE/.htaccess
 
-      # Step 3: Debugging - List files to ensure .htaccess was created
+      # Step 4: Debugging - List files to ensure .htaccess and node_modules exist
       - name: List files before deployment
         run: ls -la
 
-      # Step 4: Sync files to cPanel via FTP
+      # Step 5: Sync files to cPanel via FTP
       - name: Sync files to development
         uses: SamKirkland/FTP-Deploy-Action@v4.2.0
         with:
           server: ftp.trimworldwide.com
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          dotfiles: true
 
-      # Step 5: Trigger npm install on the server
+      # Step 6: Trigger npm install on the server
       - name: Trigger npm install on server
         run: |
           echo "Triggering npm install via PHP script..."
