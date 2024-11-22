@@ -1,4 +1,4 @@
-name: Deploy Node.js Project to cPanel via FTP and Extract Files
+name: Deploy Node.js Project to cPanel via FTP
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       # Step 1: Checkout the repository
       - name: Checkout code
@@ -18,20 +18,24 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18 # Specify your Node.js version
+          node-version: 18 # Use your desired Node.js version
 
-      # Step 3: Install dependencies (to create node_modules folder)
+      # Step 3: Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Step 5: Install lftp for FTP deployment
-      - name: Install lftp
-        run: sudo apt-get update && sudo apt-get install -y lftp
+      # Step 4: Build the project (if applicable)
+      #- name: Build the project
+      #  run: npm run build
 
-      # Step 6: Upload compressed file to cPanel via FTP
-      - name: Upload to cPanel via FTP
-        env:
-          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
-        
+      # Step 5: Create .htaccess file
+      - name: Create .htaccess file
+        run: |
+          echo "${{ secrets.HTACCESS_CONTENT }}" > .htaccess
+      # Step 6: Deploy files to cPanel via FTP
+      - name: Sync files
+        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+        with:
+          server: ftp.trimworldwide.com
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
