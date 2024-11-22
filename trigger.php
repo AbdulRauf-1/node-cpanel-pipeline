@@ -2,13 +2,14 @@
 // Path to your working directory
 $workingDir = '/home/trimworldwide/rauf.trimworldwide.com';
 
-// Full path to npm (from your terminal output)
-$npmPath = '/home/trimworldwide/.nvm/versions/node/v18.20.4/bin/npm';
+// Full path to node and npm binaries
+$nodePath = '/home/trimworldwide/.nvm/versions/node/v16.14.0/bin/node';
+$npmPath = '/home/trimworldwide/.nvm/versions/node/v16.14.0/bin/npm';
 
-// Ensure permissions are correct before running the command
-$permissionsCheck = shell_exec("chmod -R 777 $workingDir && chmod +x $npmPath 2>&1");
+// Ensure permissions for the working directory and binaries
+$permissionsCheck = shell_exec("chmod -R 775 $workingDir && chmod +x $nodePath $npmPath 2>&1");
 
-// Run npm install
+// Run npm install with the correct path
 $output = shell_exec("cd $workingDir && $npmPath install 2>&1");
 
 // Display permission checks and npm output
