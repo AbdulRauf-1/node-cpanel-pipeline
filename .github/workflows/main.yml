@@ -51,8 +51,8 @@ jobs:
           server: ftp.trimworldwide.com
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: .
-          remote-dir: .
+          local-dir: ./
+          remote-dir: ./
 
       # Step 4: Trigger npm install on the server
       - name: Trigger npm install on server
