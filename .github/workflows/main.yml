@@ -38,7 +38,6 @@ jobs:
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
-          FTP_PORT: ${{ secrets.FTP_PORT }} # Usually 21
         run: |
           lftp -c "open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER; set ftp:ssl-allow no; put project.zip -o project.zip"
 
@@ -50,4 +49,4 @@ jobs:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
-          sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "unzip -o project.zip -d ~/public_html && rm project.zip"
+          sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "unzip -o project.zip -d . && rm project.zip"
