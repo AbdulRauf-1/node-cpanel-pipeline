@@ -40,13 +40,3 @@ jobs:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
         run: |
           lftp -c "open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER; set ftp:ssl-allow no; put project.zip -o project.zip"
-
-      # Step 7: SSH into cPanel server to extract files (if SSH is available)
-      - name: Extract files on cPanel
-        if: always() # Run this step if the ZIP upload succeeds
-        env:
-          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
-          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-        run: |
-          sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "unzip -o project.zip -d . && rm project.zip"
