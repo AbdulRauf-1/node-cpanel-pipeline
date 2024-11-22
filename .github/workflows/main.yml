@@ -24,10 +24,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Compress project files, including node_modules
-      - name: Compress files
-        run: zip -r project.zip . -x "*.git*"
-
       # Step 5: Install lftp for FTP deployment
       - name: Install lftp
         run: sudo apt-get update && sudo apt-get install -y lftp
@@ -38,5 +34,4 @@ jobs:
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
-        run: |
-          lftp -c "open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER; set ftp:ssl-allow no; put project.zip -o project.zip"
+        
