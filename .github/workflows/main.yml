@@ -53,6 +53,13 @@ jobs:
           echo "Creating .env file..."
           echo "${{ secrets.ENV }}" > .env
 
+      - name: Create config folder
+        run: |
+          echo "Creating config folder..."
+          mkdir config
+          cd config
+          echo "${{ secrets.CONFIG_DB }}" > db.js
+
       # Step 4: Debugging - List files to ensure .htaccess and node_modules exist
       - name: List files before deployment
         run: ls -la
