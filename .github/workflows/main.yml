@@ -11,7 +11,11 @@ jobs:
     container:
       image: node:18.20.4
     steps:
-      - uses: actions/checkout@v2
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Cache node_modules
       - name: Cache node modules
         uses: actions/cache@v2
         with:
@@ -20,41 +24,54 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
+      # Step 3: Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      
   security_scan:
     needs: build
     runs-on: ubuntu-latest
     container:
       image: node:18.20.4
     steps:
-      - uses: actions/checkout@v2
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Run security scan
       - name: Security Scan
         uses: zricethezav/gitleaks-action@v1.5.0
 
   deploy:
+    needs: [build, security_scan]
     runs-on: ubuntu-latest
     steps:
+      # Step 1: Checkout the latest code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Create .htaccess file
       - name: Create .htaccess file
         run: |
           echo "Creating .htaccess file..."
-          echo "${{ secrets.HTACCESS_CONTENT }}" > .htaccess
+          echo "${{ secrets.HTACCESS_CONTENT }}" > $GITHUB_WORKSPACE/.htaccess
 
-      # Step 1: Checkout latest code
-      - name: Get latest code
-        uses: actions/checkout@v2
+      # Step 3: Debugging - List files to ensure .htaccess was created
+      - name: List files before deployment
+        run: ls -la
 
-      # Step 3: Upload all files including .htaccess to cPanel via FTP
+      # Step 4: Sync files to cPanel via FTP
       - name: Sync files to development
         uses: SamKirkland/FTP-Deploy-Action@v4.2.0
         with:
           server: ftp.trimworldwide.com
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          dotfiles: true
+          include: |
+            .htaccess
 
-      # Step 4: Trigger npm install on the server
+      # Step 5: Trigger npm install on the server
       - name: Trigger npm install on server
         run: |
           echo "Triggering npm install via PHP script..."
