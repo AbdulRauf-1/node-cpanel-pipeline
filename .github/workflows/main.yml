@@ -1,4 +1,4 @@
-name: Deploy Node.js Project to cPanel via FTP
+name: Deploy Node.js Project to cPanel via FTP and Extract Files
 
 on:
   push:
@@ -24,20 +24,15 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Create .htaccess file (optional, adjust as needed)
-      - name: Create .htaccess file
-        run: |
-          echo "${{ secrets.HTACCESS_CONTENT }}" > .htaccess
-
-      # Step 5: Compress project files, including node_modules
+      # Step 4: Compress project files, including node_modules
       - name: Compress files
         run: zip -r project.zip . -x "*.git*"
 
-      # Step 6: Install lftp for FTP deployment
+      # Step 5: Install lftp for FTP deployment
       - name: Install lftp
         run: sudo apt-get update && sudo apt-get install -y lftp
 
-      # Step 7: Upload compressed file to cPanel via FTP
+      # Step 6: Upload compressed file to cPanel via FTP
       - name: Upload to cPanel via FTP
         env:
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
@@ -47,11 +42,12 @@ jobs:
         run: |
           lftp -c "open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER; set ftp:ssl-allow no; put project.zip -o project.zip"
 
-      # Step 8: Extract files on cPanel server (optional, if remote shell access is available)
+      # Step 7: SSH into cPanel server to extract files (if SSH is available)
       - name: Extract files on cPanel
+        if: always() # Run this step if the ZIP upload succeeds
         env:
-          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
-          lftp -c "open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER; set ftp:ssl-allow no; ! echo unzip -o project.zip | ftp -v -i"
+          sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no $SSH_USERNAME@$SSH_HOST "unzip -o project.zip -d ~/public_html && rm project.zip"
