@@ -39,10 +39,6 @@ jobs:
       # Step 1: Checkout latest code
       - name: Get latest code
         uses: actions/checkout@v2
-        
-      # Step 2: Create .htaccess file from secret
-      - name: Create .htaccess file
-        run: echo "${{ secrets.HTACCESS_CONTENT }}" > .htaccess
 
       # Step 3: Upload all files including .htaccess to cPanel via FTP
       - name: Sync files to development
@@ -51,8 +47,6 @@ jobs:
           server: ftp.trimworldwide.com
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./
-          remote-dir: ./
 
       # Step 4: Trigger npm install on the server
       - name: Trigger npm install on server
