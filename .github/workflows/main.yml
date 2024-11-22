@@ -33,18 +33,14 @@ jobs:
       - name: Security Scan
         uses: zricethezav/gitleaks-action@v1.5.0
 
-      # Step 4: Build the project (if applicable)
-      #- name: Build the project
-      #  run: npm run build
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
 
       # Step 6: Deploy files to cPanel via FTP
       - name: Get latest code
         uses: actions/checkout@v2
-# Step 5: Create .htaccess file
-      - name: Create .htaccess file
-        run: |
-          echo "${{ secrets.HTACCESS_CONTENT }}" > .htaccess
-          
+        
       - name: Sync files to development
         uses: SamKirkland/FTP-Deploy-Action@v4.2.0
         with:
