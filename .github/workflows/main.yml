@@ -51,7 +51,7 @@ jobs:
       - name: Create .env file
         run: |
           echo "Creating .env file..."
-          touch .env
+          echo "${{ secrets.ENV }}" > .env
 
       # Step 4: Debugging - List files to ensure .htaccess and node_modules exist
       - name: List files before deployment
@@ -64,7 +64,6 @@ jobs:
           server: ftp.trimworldwide.com
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          dotfiles: true
 
       # Step 6: Trigger npm install on the server
       - name: Trigger npm install on server
