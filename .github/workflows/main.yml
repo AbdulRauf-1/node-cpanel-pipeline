@@ -39,7 +39,8 @@ jobs:
     steps:
       - name: Create .htaccess file
         run: |
-        echo "${{ secrets.HTACCESS_CONTENT }}" > .htaccess
+          echo "Creating .htaccess file..."
+          echo "${{ secrets.HTACCESS_CONTENT }}" > .htaccess
 
       # Step 1: Checkout latest code
       - name: Get latest code
