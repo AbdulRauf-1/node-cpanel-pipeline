@@ -8,7 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    
     steps:
       # Step 1: Checkout the repository
       - name: Checkout code
@@ -20,39 +20,38 @@ jobs:
         with:
           node-version: 18 # Specify your Node.js version
 
-      # Step 3: Cache Node.js modules to speed up npm install
-      - name: Cache node_modules
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.npm
-            node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      # Step 4: Install dependencies
+      # Step 3: Install dependencies (to create node_modules folder)
       - name: Install dependencies
-        run: npm ci --production
+        run: npm install
 
-      # Step 5: (Optional) Build the project
-      #- name: Build the project
-      #  run: npm run build
-
-      # Step 6: Create .htaccess file
+      # Step 4: Create .htaccess file (optional, adjust as needed)
       - name: Create .htaccess file
         run: |
           echo "${{ secrets.HTACCESS_CONTENT }}" > .htaccess
-      # Step 7: Install lftp for FTP deployment
+
+      # Step 5: Compress project files, including node_modules
+      - name: Compress files
+        run: zip -r project.zip . -x "*.git*"
+
+      # Step 6: Install lftp for FTP deployment
       - name: Install lftp
         run: sudo apt-get update && sudo apt-get install -y lftp
 
-      # Step 8: Deploy to cPanel via FTP
-      - name: Deploy to cPanel via FTP
+      # Step 7: Upload compressed file to cPanel via FTP
+      - name: Upload to cPanel via FTP
         env:
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_PORT: ${{ secrets.FTP_PORT }} # Usually 21
         run: |
-          lftp -c "open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER; set ftp:ssl-allow no; mirror -R --delete --verbose . ."
-        
+          lftp -c "open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER; set ftp:ssl-allow no; put project.zip -o project.zip"
+
+      # Step 8: Extract files on cPanel server (optional, if remote shell access is available)
+      - name: Extract files on cPanel
+        env:
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        run: |
+          lftp -c "open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER; set ftp:ssl-allow no; ! echo unzip -o project.zip | ftp -v -i"
