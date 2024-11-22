@@ -6,7 +6,7 @@ $workingDir = '/home/trimworldwide/rauf.trimworldwide.com';
 $npmPath = '/home/trimworldwide/.nvm/versions/node/v18.20.4/bin/npm';
 
 // Ensure permissions are correct before running the command
-$permissionsCheck = shell_exec("chmod -R 755 $workingDir && chmod +x $npmPath 2>&1");
+$permissionsCheck = shell_exec("chmod -R 777 $workingDir && chmod +x $npmPath 2>&1");
 
 // Run npm install
 $output = shell_exec("cd $workingDir && $npmPath install 2>&1");
