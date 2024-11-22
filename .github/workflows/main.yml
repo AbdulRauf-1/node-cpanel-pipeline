@@ -12,6 +12,7 @@ jobs:
       image: node:18.20.4
     steps:
       - uses: actions/checkout@v2
+
       - name: Cache node modules
         uses: actions/cache@v2
         with:
@@ -30,21 +31,17 @@ jobs:
       image: node:18.20.4
     steps:
       - uses: actions/checkout@v2
+
       - name: Security Scan
         uses: zricethezav/gitleaks-action@v1.5.0
 
-      # Step 4: Build the project (if applicable)
-      #- name: Build the project
-      #  run: npm run build
-  
-      # Step 5: Create .htaccess file
+      # Create the .htaccess file **after** the checkout and before deployment
       - name: Create .htaccess file
         run: |
           echo "${{ secrets.HTACCESS_CONTENT }}" > .htaccess
 
-      # Step 6: Deploy files to cPanel via FTP
-      - name: Get latest code
-        uses: actions/checkout@v2
+      # Remove the second checkout step to prevent overwriting the workspace
+      # - uses: actions/checkout@v2
 
       - name: Sync files to development
         uses: SamKirkland/FTP-Deploy-Action@v4.2.0
@@ -52,10 +49,10 @@ jobs:
           server: ftp.trimworldwide.com
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-      
+          # Enable dotfiles to include hidden files like .htaccess
+          dotfiles: true
+
       - name: Trigger npm install on server
         run: |
           echo "Triggering npm install via PHP script..."
           curl -X GET "https://rauf.trimworldwide.com/trigger.php"
-
-
