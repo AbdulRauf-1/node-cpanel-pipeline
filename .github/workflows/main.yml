@@ -33,8 +33,11 @@ jobs:
         run: |
           echo "${{ secrets.HTACCESS_CONTENT }}" > .htaccess
       # Step 6: Deploy files to cPanel via FTP
-      - name: Sync files
-        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+      - name: Get latest code
+        uses: actions/checkout@v2
+
+      - name: Sync files to development
+        uses: SamKirkland/FTP-Deploy-Action@v4.2.0
         with:
           server: ftp.trimworldwide.com
           username: ${{ secrets.FTP_USERNAME }}
