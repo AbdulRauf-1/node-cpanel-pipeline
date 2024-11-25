@@ -41,6 +41,12 @@ jobs:
       # Step 1: Checkout the latest code
       - name: Checkout code
         uses: actions/checkout@v2
+      
+      # Step 3: Create .htaccess file
+      - name: Create node module folder
+        run: |
+          echo "Creating node module folder..."
+          npm install
 
       # Step 3: Create .htaccess file
       - name: Create .htaccess file
