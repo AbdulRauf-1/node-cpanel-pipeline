@@ -42,11 +42,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       
-      # Step 3: Create .htaccess file
-      - name: Create node module folder
-        run: |
-          echo "Creating node module folder..."
-          npm install
+      
 
       # Step 3: Create .htaccess file
       - name: Create .htaccess file
@@ -65,6 +61,12 @@ jobs:
           mkdir config
           cd config
           echo "${{ secrets.CONFIG_DB }}" > db.js
+
+      # Step 3: Create .htaccess file
+      - name: Create node module folder
+        run: |
+          echo "Creating node module folder..."
+          npm ci
 
       # Step 4: Debugging - List files to ensure .htaccess and node_modules exist
       - name: List files before deployment
