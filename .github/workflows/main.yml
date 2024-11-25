@@ -42,7 +42,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 3: Create .htaccess file
+      # Step 2: Create necessary files
       - name: Create .htaccess file
         run: |
           echo "Creating .htaccess file..."
@@ -53,18 +53,18 @@ jobs:
           echo "Creating .env file..."
           echo "${{ secrets.ENV }}" > .env
 
-      - name: Create config folder
+      - name: Create config folder and file
         run: |
           echo "Creating config folder..."
           mkdir config
           cd config
           echo "${{ secrets.CONFIG_DB }}" > db.js
 
-      # Step 4: Debugging - List files to ensure .htaccess and node_modules exist
+      # Step 3: Debugging - List files to ensure .htaccess and node_modules exist
       - name: List files before deployment
         run: ls -la
 
-      # Step 5: Sync files to cPanel via FTP
+      # Step 4: Sync files to cPanel via FTP
       - name: Sync files to development
         uses: SamKirkland/FTP-Deploy-Action@v4.2.0
         with:
@@ -72,7 +72,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
 
-      # Step 6: Trigger npm install on the server
+      # Step 5: Trigger npm install on the server
       - name: Trigger npm install on server
         run: |
           echo "Triggering npm install via PHP script..."
